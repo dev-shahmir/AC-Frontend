@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import instance from "../utils/axios";
@@ -10,13 +9,11 @@ import {
   FiMessageSquare,
   FiEye,
 } from "react-icons/fi";
-// import { AiOutlineSearch } from "react-icons/ai";
 
 const AnnouncementsPage = () => {
   const [announcements, setAnnouncements] = useState([]);
   const [editingId, setEditingId] = useState(null);
   const [formData, setFormData] = useState({
-    title: "",
     message: "",
   });
   const [loading, setLoading] = useState(false);
@@ -50,15 +47,17 @@ const AnnouncementsPage = () => {
   const startEditing = (announcement) => {
     setEditingId(announcement._id);
     setFormData({
-      // title: announcement.title,
       message: announcement.message,
     });
+    // Close modal if open
+    setShowModal(false);
+    setSelectedAnnouncement(null);
   };
 
   // Update announcement
   const handleUpdate = async (id) => {
     if (!formData.message.trim()) {
-      toast.error("Please fill in all fields");
+      toast.error("Please fill in the message field");
       return;
     }
 
@@ -66,7 +65,7 @@ const AnnouncementsPage = () => {
       await instance.put(`/announcement/update/${id}`, formData);
       toast.success("Announcement updated successfully");
       setEditingId(null);
-      setFormData({ title: "", message: "" });
+      setFormData({ message: "" });
       fetchAnnouncements();
     } catch (err) {
       console.error(err);
@@ -77,10 +76,8 @@ const AnnouncementsPage = () => {
   // Cancel editing
   const cancelEditing = () => {
     setEditingId(null);
-    setFormData({ title: "", message: "" });
+    setFormData({ message: "" });
   };
-
-
 
   // View announcement in modal
   const viewAnnouncement = (announcement) => {
@@ -130,20 +127,6 @@ const AnnouncementsPage = () => {
                 </p>
               </div>
             </div>
-
-            {/* Search Bar */}
-            {/* <div className="relative w-full lg:w-80">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <AiOutlineSearch className="h-5 w-5 text-gray-400" />
-              </div>
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search announcements..."
-                className="block w-full pl-10 pr-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors text-sm sm:text-base"
-              />
-            </div> */}
           </div>
 
           {/* Stats Bar */}
@@ -205,11 +188,6 @@ const AnnouncementsPage = () => {
                 <h3 className="text-lg font-medium text-gray-900 mb-2">
                   No announcements found
                 </h3>
-                {/* <p className="text-gray-500">
-                  {searchQuery
-                    ? "Try adjusting your search terms"
-                    : "Create your first announcement to get started"}
-                </p> */}
               </div>
             ) : (
               announcements.map((announcement, index) => (
@@ -236,18 +214,6 @@ const AnnouncementsPage = () => {
                         
                         <div className="space-y-3">
                           <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">Title</label>
-                            <input
-                              type="text"
-                              name="title"
-                              value={formData.title}
-                              onChange={handleChange}
-                              placeholder="Enter announcement title..."
-                              className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-gray-50 focus:bg-white text-sm"
-                            />
-                          </div>
-                          
-                          <div>
                             <label className="block text-sm font-medium text-gray-700 mb-1">Message</label>
                             <textarea
                               name="message"
@@ -269,7 +235,7 @@ const AnnouncementsPage = () => {
                           </button>
                           <button
                             onClick={() => handleUpdate(announcement._id)}
-                            disabled={!formData.title.trim() || !formData.message.trim()}
+                            disabled={!formData.message.trim()}
                             className="flex-1 px-4 py-2 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-lg hover:from-blue-600 hover:to-blue-700 transition-all duration-200 font-medium shadow-sm hover:shadow disabled:opacity-50 disabled:cursor-not-allowed text-sm"
                           >
                             Save
@@ -287,18 +253,6 @@ const AnnouncementsPage = () => {
                         </div>
                         
                         <div className="space-y-4">
-                          {/* <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-2">Title</label>
-                            <input
-                              type="text"
-                              name="title"
-                              value={formData.title}
-                              onChange={handleChange}
-                              placeholder="Enter announcement title..."
-                              className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-gray-50 focus:bg-white"
-                            />
-                          </div> */}
-                          
                           <div>
                             <label className="block text-sm font-medium text-gray-700 mb-2">Message</label>
                             <textarea
@@ -321,7 +275,7 @@ const AnnouncementsPage = () => {
                           </button>
                           <button
                             onClick={() => handleUpdate(announcement._id)}
-                            disabled={!formData.title.trim() || !formData.message.trim()}
+                            disabled={!formData.message.trim()}
                             className="px-5 py-2.5 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-lg hover:from-blue-600 hover:to-blue-700 transition-all duration-200 font-medium shadow-sm hover:shadow disabled:opacity-50 disabled:cursor-not-allowed"
                           >
                             Save Changes
@@ -335,9 +289,6 @@ const AnnouncementsPage = () => {
                       {/* Mobile Layout */}
                       <div className="flex flex-col sm:hidden gap-3">
                         <div className="flex justify-between items-start">
-                          {/* <h3 className="font-bold text-lg text-gray-900 pr-2">
-                            {announcement.title}
-                          </h3> */}
                           <span className="text-xs text-gray-500 whitespace-nowrap">
                             {formatDate(announcement.createdAt)}
                           </span>
@@ -372,21 +323,6 @@ const AnnouncementsPage = () => {
                             <FiEdit3 size={14} />
                             Edit
                           </button>
-                          {/* <button
-                            onClick={() => deleteAnnouncement(announcement._id, announcement.title)}
-                            disabled={deleting === announcement._id}
-                            className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors flex items-center justify-center gap-1 ${
-                              deleting === announcement._id
-                                ? 'bg-gray-400 cursor-not-allowed text-white'
-                                : 'bg-red-500 hover:bg-red-600 text-white'
-                            }`}
-                          >
-                            {deleting === announcement._id ? (
-                              <div className="w-3 h-3 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                            ) : (
-                              <FiTrash2 size={14} />
-                            )}
-                          </button> */}
                         </div>
                       </div>
 
@@ -398,9 +334,6 @@ const AnnouncementsPage = () => {
                               <FiBell className="text-blue-600" />
                             </div>
                             <div className="flex-1">
-                              <h3 className="font-bold text-xl text-gray-900 mb-2">
-                                {announcement.title}
-                              </h3>
                               <div className="flex items-center gap-4 text-sm text-gray-600">
                                 <span className="flex items-center gap-1">
                                   <FiCalendar size={12} />
@@ -430,22 +363,6 @@ const AnnouncementsPage = () => {
                               <FiEdit3 size={16} />
                               Edit
                             </button>
-                            {/* <button
-                              onClick={() => deleteAnnouncement(announcement._id, announcement.title)}
-                              disabled={deleting === announcement._id}
-                              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2 ${
-                                deleting === announcement._id
-                                  ? 'bg-gray-400 cursor-not-allowed text-white'
-                                  : 'bg-red-500 hover:bg-red-600 text-white'
-                              }`}
-                            >
-                              {deleting === announcement._id ? (
-                                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                              ) : (
-                                <FiTrash2 size={16} />
-                              )}
-                              {deleting === announcement._id ? 'Deleting...' : 'Delete'}
-                            </button> */}
                           </div>
                         </div>
 
@@ -489,7 +406,7 @@ const AnnouncementsPage = () => {
                 </div>
                 <div>
                   <h2 className="text-xl sm:text-2xl font-bold text-gray-900">
-                    {selectedAnnouncement.title}
+                    Announcement Details
                   </h2>
                   <p className="text-sm text-gray-600">
                     Published on {formatDate(selectedAnnouncement.createdAt)}
@@ -504,22 +421,6 @@ const AnnouncementsPage = () => {
                   <FiEdit3 size={14} />
                   Edit
                 </button>
-                {/* <button
-                  onClick={() => deleteAnnouncement(selectedAnnouncement._id, selectedAnnouncement.title)}
-                  disabled={deleting === selectedAnnouncement._id}
-                  className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors flex items-center gap-1 ${
-                    deleting === selectedAnnouncement._id
-                      ? 'bg-gray-400 cursor-not-allowed text-white'
-                      : 'bg-red-500 hover:bg-red-600 text-white'
-                  }`}
-                >
-                  {deleting === selectedAnnouncement._id ? (
-                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                  ) : (
-                    <FiTrash2 size={14} />
-                  )}
-                  {deleting === selectedAnnouncement._id ? 'Deleting...' : 'Delete'}
-                </button> */}
                 <button
                   onClick={closeModal}
                   className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
@@ -541,17 +442,13 @@ const AnnouncementsPage = () => {
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm sm:text-base">
                   <div>
-                    <span className="font-medium text-gray-700 block">Title:</span>
-                    <span className="text-gray-600">{selectedAnnouncement.title}</span>
-                  </div>
-                  <div>
                     <span className="font-medium text-gray-700 block">Status:</span>
                     <span className="inline-flex items-center gap-1 text-green-600">
                       <div className="w-2 h-2 bg-green-400 rounded-full"></div>
                       Published
                     </span>
                   </div>
-                  <div className="md:col-span-2">
+                  <div>
                     <span className="font-medium text-gray-700 block">Published Date:</span>
                     <span className="text-gray-600">{formatDate(selectedAnnouncement.createdAt)}</span>
                   </div>
@@ -577,7 +474,7 @@ const AnnouncementsPage = () => {
         </div>
       )}
 
-      <style jsx>{`
+      <style>{`
         @keyframes fadeInUp {
           from {
             opacity: 0;

@@ -38,7 +38,7 @@ const Slider = () => {
   };
 
   return (
-    <div className="relative w-full h-[30vh] md:h-[86vh] overflow-hidden group">
+    <div className="relative w-full h-[30vh] md:h-[87vh] overflow-hidden group">
       {/* Background slides with simple fade */}
       <div className="absolute inset-0">
         {images.map((image, index) => (
