@@ -250,7 +250,7 @@ export default function Footer() {
               </p>
               <div className="flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-4">
                 <span className="text-[#ffefcc]/60 text-sm font-medium orbitron">
-                  Developed & Designed by
+                  Powered By :
                 </span>
                 <div className="bg-gradient-to-r cursor-pointer from-[#ffefcc]/15 to-[#ffdf9e]/10 backdrop-blur-sm px-4 py-2 rounded-xl border border-[#ffefcc]/30 hover:border-[#ffdf9e]/50 transition-all duration-300 hover:scale-105 shadow-lg">
                   <a
